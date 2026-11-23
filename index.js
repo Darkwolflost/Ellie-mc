@@ -55,3 +55,20 @@ function createBot() {
 }
 
 createBot()	
+bot.on('spawn', () => {
+  // PATIGILIN SI ELLIE — WAG GAGALAW PARA HINDI MA-KICK
+  bot.physicsEnabled = false
+  bot.setControlState('forward', false)
+  bot.setControlState('back', false)
+  bot.setControlState('left', false)
+  bot.setControlState('right', false)
+  bot.setControlState('jump', false)
+  bot.setControlState('sprint', false)
+  bot.setControlState('sneak', false)
+  console.log('Ellie spawned and is STAYING STILL')
+})
+
+// WAG MAGPA-AUTO LOOK / AUTO JUMP
+bot.on('physicTick', () => {
+  // walang gagawin — stay still lang
+})
