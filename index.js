@@ -1,7 +1,5 @@
 const mineflayer = require('mineflayer')
-const { pathfinder, Movements, goals } = require('mineflayer-pathfinder')
 const express = require('express')
-const GoalFollow = goals.GoalFollow
 
 // Keep Render alive
 const app = express()
@@ -18,17 +16,13 @@ function createBot() {
     username: 'Ellie',
     auth: 'offline',
     version: false,
+    physicsEnabled: false
   })
-
-  bot.loadPlugin(pathfinder)
 
   bot.once('spawn', () => {
     console.log('Ellie is online in Minecraft!')
     bot.chat('Hi everyone! Ellie is here! 💖 - made by Frix')
-    setInterval(() => {
-      bot.setControlState('jump', true)
-      setTimeout(() => bot.setControlState('jump', false), 500)
-    }, 30000)
+    // WALANG TALON, WALANG GALAW - tatayo lang siya
   })
 
   bot.on('chat', (username, message) => {
@@ -36,11 +30,8 @@ function createBot() {
     const msg = message.toLowerCase()
     if (msg.includes('ellie')) {
       if (msg.includes('follow')) {
-        following = true
-        bot.chat(`Okay ${username}! Susundan na kita! 💖`)
+        bot.chat(`Sorry ${username}! Hindi muna ako makasunod, tatayo lang muna ako dito 💖`)
       } else if (msg.includes('stop')) {
-        following = false
-        bot.pathfinder.setGoal(null)
         bot.chat('Okay stop na ko, dito lang ako 🥺')
       } else if (msg.includes('hi') || msg.includes('hello')) {
         bot.chat(`Hi ${username}!! Kamusta ka? 💖`)
@@ -50,26 +41,17 @@ function createBot() {
         bot.chat(`Yes ${username}? Tinatawag mo ko? 💖`)
       }
     }
-    if (following) {
-      const target = bot.players[username]?.entity
-      if (target) {
-        const mcData = require('minecraft-data')(bot.version)
-        const movements = new Movements(bot, mcData)
-        bot.pathfinder.setMovements(movements)
-        bot.pathfinder.setGoal(new GoalFollow(target, 2, true), true)
-      }
-    }
   })
 
   bot.on('kicked', (reason) => {
     console.log('Kicked:', reason)
-    setTimeout(createBot, 5000)
+    setTimeout(createBot, 30000)
   })
   bot.on('error', (err) => console.log('Error:', err))
   bot.on('end', () => {
     console.log('Disconnected, reconnecting...')
-    setTimeout(createBot, 5000)
+    setTimeout(createBot, 30000)
   })
 }
 
-createBot()
+createBot()	
