@@ -43,9 +43,11 @@ function createBot() {
   bot.on('error', (err) => console.log('Error:', err))
 
   bot.on('end', () => {
-    console.log('Disconnected, reconnecting...')
-    setTimeout(createBot, 10000)
-  })
+  console.log('Ellie got kicked, waiting 10 seconds before retry...')
+  setTimeout(() => {
+    console.log('Trying to reconnect...')
+  }, 10000)
+})
 }
 
 createBot()
