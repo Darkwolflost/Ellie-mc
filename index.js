@@ -1,3 +1,8 @@
+const express = require('express')
+const app = express()
+const PORT = process.env.PORT || 3000
+app.get('/', (req, res) => res.send('Ellie is alive!'))
+app.listen(PORT, () => console.log('Web server on ' + PORT))
 const mineflayer = require('mineflayer')
 
 function startBot() {
