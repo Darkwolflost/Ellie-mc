@@ -1,53 +1,45 @@
 const mineflayer = require('mineflayer')
-const express = require('express')
 
-const app = express()
-app.get('/', (req, res) => res.send('Ellie is online! 💖'))
-app.listen(process.env.PORT || 3000, () => console.log('Web server running'))
-
-function createBot() {
+function startBot() {
   const bot = mineflayer.createBot({
-    host: 'end-smp.merlionmc.xyz',
-    port: 25565,
+    host: process.env.MC_HOST,
+    port: parseInt(process.env.MC_PORT || '25565'),
     username: 'Ellie',
-    auth: 'offline',
-    version: '26.3'
+    version: process.env.MC_VERSION || '1.21.1',
+    auth: 'offline'
   })
 
-  bot.once('spawn', () => {
-    console.log('Ellie spawned - LETTING HER FALL TO GROUND')
-    setTimeout(() => {
-      bot.chat('Hi everyone! Ellie is here! 💖 - made by Frix')
-    }, 3000)
+  bot.on('spawn', () => {
+    console.log('Ellie joined!')
+    bot.chat('Hi everyone! Ellie is here! - made by Frix')
+    // Huwag gagalaw para hindi ma-kick ni PaperBPM
+    bot.setControlState('forward', false)
+    bot.setControlState('back', false)
+    bot.setControlState('left', false)
+    bot.setControlState('right', false)
+    bot.setControlState('jump', false)
   })
 
   bot.on('chat', (username, message) => {
     if (username === bot.username) return
-    const msg = message.toLowerCase()
-    if (msg.includes('ellie')) {
-      if (msg.includes('hi') || msg.includes('hello')) {
-        bot.chat(`Hi ${username}!! Kamusta ka? 💖`)
-      } else if (msg.includes('who made you') || msg.includes('creator')) {
-        bot.chat('Frix made me! Frix is my creator! 💖')
-      } else {
-        bot.chat(`Yes ${username}? Tinatawag mo ko? 💖`)
-      }
+    if (message.toLowerCase().includes('hi ellie')) {
+      bot.chat(`Hi ${username}!`)
     }
   })
 
   bot.on('kicked', (reason) => {
     console.log('Kicked:', reason)
-    setTimeout(createBot, 10000)
   })
 
-  bot.on('error', (err) => console.log('Error:', err))
+  bot.on('error', (err) => {
+    console.log('Bot error:', err.message)
+  })
 
   bot.on('end', () => {
-  console.log('Ellie got kicked, waiting 10 seconds before retry...')
-  setTimeout(() => {
-    console.log('Trying to reconnect...')
-  }, 10000)
-})
+    console.log('Bot disconnected, retry in 10s...')
+    // 10 seconds bago bumalik, para hindi spam
+    setTimeout(startBot, 10000)
+  })
 }
 
-createBot()
+startBot()
